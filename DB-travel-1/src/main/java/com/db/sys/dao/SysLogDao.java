@@ -15,7 +15,7 @@ public interface SysLogDao {
 	
 	int CountRows(String username);
 	
-	int  DeleteObject(Integer... ids);
+	
 
 }
  
