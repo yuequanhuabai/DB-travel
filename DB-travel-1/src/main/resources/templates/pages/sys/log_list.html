@@ -48,10 +48,43 @@
 </div>
 <script type="text/javascript">
 
+//加载玩html，css，js后，开始加载的内容
 $(function(){
-	$("#pageId").load("/doPageUI")
+	$("#pageId").load("/doPageUI",GetLogData)
+		
 })
 
+//获取请求url及参数，发出ajax请求
+ function GetLogData(){
+	var url="/log/doFindPageObjects";
+
+	//params={"pageCurrent":1};
+	//pageCurrent 需要设置成动态获取，从doJumpToPage中动态获取
+	var pageCurrent = $("#pageId").data("pageCurrent");
+	if(!pageCurrent)pageCurrent=1;
+	var params={"pageCurrent":pageCurrent};
+	
+	$.getJSON(url,params,function(jsonResult){
+		//console.log(jsonResult);
+		//debugger;
+		doHandleResult(jsonResult);
+	});
+	
+}
+// 处理返回的json对象
+function doHandleResult(jsonResult){
+	//debugger;
+	if(jsonResult.state==1){
+		doShowLogData(jsonResult.data.records);
+		
+		//如果有日志数据，则加载相应的分页数据
+		LoadPagination(jsonResult.data);
+	}else{
+		alert(jsonResult.message);
+	}
+	
+	
+}
 
 
 
@@ -64,28 +97,32 @@ $(function(){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// 数据的呈现
+function doShowLogData(log_records){
+	//1.清空当前空间
+	//2.添加数据入表格
+	var tBody=$("#tbodyId")
+	tBody.empty();
+	for(var i in log_records){
+		var tr=$("<tr></tr>");
+		var tds=doCreateTds(log_records[i]);
+		console.log(log_records[i])
+		tr.append(tds);
+		tBody.append(tr);
+	}
+	
+}
+//数据呈现的数据显示的格式
+function doCreateTds(LogRow){
+	var tds="<td><input type='checkbox' class='cBox' name='cItem' value='"+LogRow.id+"' ></td>"+
+	        "<td>"+LogRow.username+"</td>"+
+	        "<td>"+LogRow.operation+"</td>"+
+	        "<td>"+LogRow.method+"</td>"+
+	        "<td>"+LogRow.params+"</td>"+
+	        "<td>"+LogRow.ip+"</td>"+
+	        "<td>"+LogRow.time+"</td>";
+	return tds;
+}
 
 
 
