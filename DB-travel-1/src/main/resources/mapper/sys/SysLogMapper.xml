@@ -27,6 +27,19 @@ select count(*)
 from sys_logs
 <include refid="query"></include>
 </select>
+  
+<delete id="DeleteObject">
+
+delete 
+from sys_logs
+<where>
+<foreach collection="ids" item="id">
+or id=#{id}
+</foreach>
+</where> 
+</delete>
+  
+  
 
 </mapper>
   
